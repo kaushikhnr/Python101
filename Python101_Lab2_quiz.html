@@ -1,0 +1,266 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Python 101 Lab2 Quiz</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            padding: 40px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .question-block {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #eef1ff;
+            border: 1px solid #c5cff5;
+            border-left: 4px solid #667eea;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+        }
+
+        .question-block strong {
+            display: block;
+            margin-bottom: 15px;
+            font-size: 16px;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .options {
+            margin-top: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .option-label {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            padding: 10px;
+            border-radius: 5px;
+            transition: background-color 0.2s, color 0.2s, border-left 0.2s;
+        }
+
+        .option-label:hover {
+            background-color: #e8e8ff;
+        }
+
+        .option-label.correct-choice {
+            background-color: #d4edda;
+            border-left: 4px solid #28a745;
+        }
+
+        .option-label.wrong-choice {
+            background-color: #f8d7da;
+            border-left: 4px solid #dc3545;
+        }
+
+        .option-label.selected-only {
+            font-weight: bold;
+        }
+
+        .option-label.neutral {
+            background-color: transparent;
+            border-left: 4px solid transparent;
+        }
+
+        input[type="radio"] {
+            margin-right: 10px;
+            cursor: pointer;
+            accent-color: #667eea;
+        }
+
+        .button-group {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        button {
+            background-color: #667eea;
+            color: white;
+            padding: 12px 30px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #764ba2;
+        }
+
+        #score-heading {
+            font-size: 24px;
+            color: #667eea;
+            text-align: center;
+            margin: 30px 0;
+        }
+
+        .status {
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        .status.correct {
+            color: #28a745;
+        }
+
+        .status.incorrect {
+            color: #dc3545;
+        }
+
+        .question-status {
+            margin-top: 10px;
+        }
+
+        .explanation {
+            margin-top: 6px;
+            font-size: 13px;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>ArrayList Quiz</h1>
+
+        <div id="quiz-container"></div>
+
+        <div class="button-group">
+            <button id="submit-btn">Submit Quiz</button>
+        </div>
+
+        <h2 id="score-heading" class="hidden"></h2>
+    </div>
+
+    <script>
+        const questions = [{"id": "1", "question": "In Python's memory management model, how is a \"variable\" best described?", "options": [{"key": "a", "text": "A fixed container in memory that holds a value"}, {"key": "b", "text": "A label or name that refers to an object"}, {"key": "c", "text": "A compiler directive that reserves stack space"}, {"key": "d", "text": "A static pointer to a hardware address"}], "correct": "b", "explanation": "According to Python memory management, Python does not have variables in the traditional sense (like C/C++); instead, it has 'names' or labels that point to objects in memory [1, 2]."}, {"id": "2", "question": "Which function allows you to check the current reference count of a Python object?", "options": [{"key": "a", "text": "memory.count()"}, {"key": "b", "text": "sys.ref_count()"}, {"key": "c", "text": "sys.getrefcount()"}, {"key": "d", "text": "obj.count()"}], "correct": "c", "explanation": "The `sys.getrefcount(X)` function is used to get the current reference count of an object 'X' [3]."}, {"id": "3", "question": "What behavior describes Python's 'dynamic typing'?", "options": [{"key": "a", "text": "Variables must be declared with a type before use."}, {"key": "b", "text": "Variables cannot change type once assigned."}, {"key": "c", "text": "Variables can be reassigned to values of different types dynamically."}, {"key": "d", "text": "Memory is allocated statically at compile time."}], "correct": "c", "explanation": "Python uses dynamic typing, allowing variables to be assigned without specifying their type, and a single name can refer to objects of different types at different times [4, 5]."}, {"id": "4", "question": "Which of the following fields is contained within a standard Python object (PyObject)?", "options": [{"key": "a", "text": "type"}, {"key": "b", "text": "ref-count"}, {"key": "c", "text": "value"}, {"key": "d", "text": "All of the above"}], "correct": "d", "explanation": "All Python objects are derived from PyObject, which contains three main fields: type, ref-count, and value [6]."}, {"id": "5", "question": "What is the result of the expression `2 ** 3 ** 2` in Python?", "options": [{"key": "a", "text": "64"}, {"key": "b", "text": "512"}, {"key": "c", "text": "12"}, {"key": "d", "text": "SyntaxError"}], "correct": "b", "explanation": "The exponentiation operator `**` has right-to-left associativity. Therefore, `3 ** 2` is evaluated first (9), and then `2 ** 9` results in 512 [7]."}, {"id": "6", "question": "Which operator represents \"floor division\" (rounding down to the nearest integer)?", "options": [{"key": "a", "text": "/"}, {"key": "b", "text": "//"}, {"key": "c", "text": "%"}, {"key": "d", "text": "div"}], "correct": "b", "explanation": "The `//` operator performs floor division, effectively cutting off any digits after the decimal point [8, 9]."}, {"id": "7", "question": "What is the output of the following code?\r<br>print(100 / 10 * 10)", "options": [{"key": "a", "text": "1.0"}, {"key": "b", "text": "10.0"}, {"key": "c", "text": "100.0"}, {"key": "d", "text": "1000.0"}], "correct": "c", "explanation": "Division and multiplication have the same precedence and are evaluated left-to-right. 100 / 10 is 10.0, and 10.0 * 10 is 100.0 [10]."}, {"id": "8", "question": "What distinguishes the `and` operator from the `&` operator in Python?", "options": [{"key": "a", "text": "`and` is bitwise; `&` is logical"}, {"key": "b", "text": "`and` is short-circuiting; `&` is not"}, {"key": "c", "text": "They are identical"}, {"key": "d", "text": "`&` is used for strings; `and` for numbers"}], "correct": "b", "explanation": "The `and` operator is a logical operator that short-circuits (stops evaluation if the first operand is False), whereas `&` is a bitwise operator that evaluates both sides [11, 12]."}, {"id": "9", "question": "According to PEP 8, how should constants be named in Python?", "options": [{"key": "a", "text": "camelCase"}, {"key": "b", "text": "PascalCase"}, {"key": "c", "text": "snake_case"}, {"key": "d", "text": "UPPER_CASE_WITH_UNDERSCORES"}], "correct": "d", "explanation": "Constants should be written in all capital letters with underscores separating words (e.g., `MAX_SPEED`) [13]."}, {"id": "10", "question": "Which typing construct was introduced in Python 3.8 to indicate a variable should not be reassigned?", "options": [{"key": "a", "text": "typing.Const"}, {"key": "b", "text": "typing.Static"}, {"key": "c", "text": "typing.Final"}, {"key": "d", "text": "typing.Fixed"}], "correct": "c", "explanation": "`typing.Final` was added to indicate to static type checkers that a name is a constant and should not be reassigned [14]."}, {"id": "11", "question": "What is the return type of the `input()` function?", "options": [{"key": "a", "text": "int"}, {"key": "b", "text": "float"}, {"key": "c", "text": "str"}, {"key": "d", "text": "None"}], "correct": "c", "explanation": "The `input()` function always returns the entered value as a string [15]."}, {"id": "12", "question": "Which of the following is an immutable sequence type?", "options": [{"key": "a", "text": "list"}, {"key": "b", "text": "dict"}, {"key": "c", "text": "tuple"}, {"key": "d", "text": "set"}], "correct": "c", "explanation": "Tuples are immutable sequences, meaning they cannot be changed after creation, unlike lists [16, 17]."}, {"id": "13", "question": "What is the result of `5 and 7`?", "options": [{"key": "a", "text": "TRUE"}, {"key": "b", "text": "FALSE"}, {"key": "c", "text": "5"}, {"key": "d", "text": "7"}], "correct": "d", "explanation": "The logical `and` operator returns the last evaluated argument if all are true. Since 5 is truthy, it evaluates 7, and returns 7 [18]."}, {"id": "14", "question": "What is the result of `5 & 7` (bitwise AND)?", "options": [{"key": "a", "text": "5"}, {"key": "b", "text": "7"}, {"key": "c", "text": "2"}, {"key": "d", "text": "0"}], "correct": "a", "explanation": "5 is `101` in binary and 7 is `111`. Performing bitwise AND results in `101`, which is 5 [18]."}, {"id": "15", "question": "Which value is considered Falsy in Python?", "options": [{"key": "a", "text": "1"}, {"key": "b", "text": "TRUE"}, {"key": "c", "text": "0"}, {"key": "d", "text": "[1"}, {"key": "e", "text": "19]"}], "correct": "", "explanation": "c"}, {"id": "16", "question": "What is the output of the following program?\r<br>x = 10\r<br>if x > 10:\r<br>    print('High')\r<br>else:\r<br>    print('Low')", "options": [{"key": "a", "text": "High"}, {"key": "b", "text": "Low"}, {"key": "c", "text": "High Low"}, {"key": "d", "text": "Nothing"}], "correct": "b", "explanation": "The condition `x > 10` (10 > 10) is False, so the `else` block executes, printing 'Low' [21]."}, {"id": "17", "question": "Which built-in constant represents a null or empty value?", "options": [{"key": "a", "text": "Null"}, {"key": "b", "text": "nil"}, {"key": "c", "text": "None"}, {"key": "d", "text": "void"}], "correct": "c", "explanation": "`None` is the built-in constant representing the null value or absence of a value [22]."}, {"id": "18", "question": "What happens if you attempt to assign a value to `__debug__`?", "options": [{"key": "a", "text": "It changes the debug mode."}, {"key": "b", "text": "It raises a SyntaxError."}, {"key": "c", "text": "It is ignored."}, {"key": "d", "text": "It creates a new local variable."}], "correct": "b", "explanation": "`__debug__` is a strict constant in Python; attempting to assign to it raises a SyntaxError [23]."}, {"id": "19", "question": "Which operator has the highest precedence?", "options": [{"key": "a", "text": "+"}, {"key": "b", "text": "*"}, {"key": "c", "text": "and"}, {"key": "d", "text": "()"}], "correct": "d", "explanation": "Parentheses `()` have the highest precedence and can override default evaluation order [24]."}, {"id": "20", "question": "What is the result of `type(134)`?", "options": [{"key": "a", "text": "<class 'int'>"}, {"key": "b", "text": "<class 'float'>"}, {"key": "c", "text": "<class 'str'>"}, {"key": "d", "text": "<class 'number'>"}], "correct": "a", "explanation": "The value 134 is an integer, so `type(134)` returns `<class 'int'>` [15]."}, {"id": "21", "question": "How does Python handle garbage collection for cyclical references?", "options": [{"key": "a", "text": "It cannot handle them."}, {"key": "b", "text": "It uses Reference Counting only."}, {"key": "c", "text": "It uses a Tracing (Mark and Sweep) algorithm."}, {"key": "d", "text": "It requires manual deallocation."}], "correct": "c", "explanation": "While reference counting is the primary mechanism, Python uses Tracing (Mark and Sweep) to detect and collect cyclical references [25]."}, {"id": "22", "question": "What is the result of `True or sys.exit(1)`?", "options": [{"key": "a", "text": "The program exits."}, {"key": "b", "text": "It returns False."}, {"key": "c", "text": "It returns True without exiting."}, {"key": "d", "text": "It raises an error."}], "correct": "c", "explanation": "Due to short-circuit evaluation, `True or ...` evaluates to `True` immediately without executing the second operand (`sys.exit(1)`), so the program does not exit [11, 26]."}, {"id": "23", "question": "What is the associativity of the assignment operator `=`?", "options": [{"key": "a", "text": "Left to right"}, {"key": "b", "text": "Right to left"}, {"key": "c", "text": "Non-associative"}, {"key": "d", "text": "Random"}], "correct": "b", "explanation": "Assignment expressions are evaluated right to left (e.g., `a = b = c` assigns `c` to `b`, then `b` to `a`) [24]."}, {"id": "24", "question": "Which method can be used in a class to prevent the creation of `__dict__` and make attributes immutable (strict constants)?", "options": [{"key": "a", "text": "`__init__`"}, {"key": "b", "text": "`__slots__`"}, {"key": "c", "text": "`__const__`"}, {"key": "d", "text": "`__frozen__`"}], "correct": "b", "explanation": "Defining `__slots__` without a `__dict__` prevents the creation of new attributes, and can be used to make a namespace for read-only constants [27]."}, {"id": "25", "question": "What is the output of `print(int(True))`?", "options": [{"key": "a", "text": "1"}, {"key": "b", "text": "0"}, {"key": "c", "text": "TRUE"}, {"key": "d", "text": "Error"}], "correct": "a", "explanation": "Boolean values in Python are subclasses of integers, where `True` acts like `1` [20]."}, {"id": "26", "question": "Which operator checks if two values are NOT equal?", "options": [{"key": "a", "text": "<>"}, {"key": "b", "text": "!="}, {"key": "c", "text": "not ="}, {"key": "d", "text": "== not"}], "correct": "b", "explanation": "The `!=` operator is used to check if two values are not equal [28]."}, {"id": "27", "question": "What is the output of `print(3 < 5 and 5 < 10)`?", "options": [{"key": "a", "text": "TRUE"}, {"key": "b", "text": "FALSE"}, {"key": "c", "text": "5"}, {"key": "d", "text": "10"}], "correct": "a", "explanation": "Both conditions `3 < 5` and `5 < 10` are True, so the result of `and` is True [29]."}, {"id": "28", "question": "What is the value of `math.pi` (approximate)?", "options": [{"key": "a", "text": "3.14159"}, {"key": "b", "text": "2.71828"}, {"key": "c", "text": "1.41421"}, {"key": "d", "text": "6.28318"}], "correct": "a", "explanation": "`math.pi` is a built-in constant in the `math` module representing Pi, approx 3.14159 [30]."}, {"id": "29", "question": "Which logical operator reverses a boolean value?", "options": [{"key": "a", "text": "reverse"}, {"key": "b", "text": "flip"}, {"key": "c", "text": "not"}, {"key": "d", "text": "inv"}], "correct": "c", "explanation": "The `not` operator takes a single Boolean value and switches it to the opposite value (negates it) [31]."}, {"id": "30", "question": "What does the expression `10 % 3` return?", "options": [{"key": "a", "text": "3.33"}, {"key": "b", "text": "1"}, {"key": "c", "text": "3"}, {"key": "d", "text": "0"}], "correct": "b", "explanation": "The modulo operator `%` returns the remainder of the division. 10 divided by 3 is 3 with a remainder of 1 [8]."}, {"id": "31", "question": "What is the result of `not (5 > 10)`?", "options": [{"key": "a", "text": "TRUE"}, {"key": "b", "text": "FALSE"}, {"key": "c", "text": "None"}, {"key": "d", "text": "Error"}], "correct": "a", "explanation": "`5 > 10` is False. The `not` operator negates False to True [31]."}, {"id": "32", "question": "Code Snippet: `print(type('3.14'))` returns:", "options": [{"key": "a", "text": "<class 'int'>"}, {"key": "b", "text": "<class 'float'>"}, {"key": "c", "text": "<class 'str'>"}, {"key": "d", "text": "<class 'bool'>"}], "correct": "c", "explanation": "Values enclosed in quotes are strings, even if they contain digits [15]."}, {"id": "33", "question": "What is the output of `print(10 + 2 * 3)`?", "options": [{"key": "a", "text": "36"}, {"key": "b", "text": "16"}, {"key": "c", "text": "15"}, {"key": "d", "text": "12"}], "correct": "b", "explanation": "Multiplication `*` has higher precedence than addition `+`. `2 * 3` is 6, plus 10 is 16 [32]."}, {"id": "34", "question": "Which definition best fits a \"runtime error\"?", "options": [{"key": "a", "text": "Code violates grammar rules."}, {"key": "b", "text": "Code runs but produces wrong results."}, {"key": "c", "text": "Code crashes during execution."}, {"key": "d", "text": "Code fails to compile."}], "correct": "c", "explanation": "A runtime error occurs while the code is being executed (e.g., dividing by zero), distinct from syntax errors (parsing) or logical errors (wrong result) [33]."}, {"id": "35", "question": "Which of the following creates a tuple?", "options": [{"key": "a", "text": "`[1"}, {"key": "b", "text": "19]`"}, {"key": "c", "text": "`{1"}, {"key": "d", "text": "2}`"}, {"key": "e", "text": "`(1, 2)`"}], "correct": "`\"1", "explanation": "2\"`"}, {"id": "36", "question": "What is the output of: `print(bool(\"False\"))`?", "options": [{"key": "a", "text": "TRUE"}, {"key": "b", "text": "FALSE"}, {"key": "c", "text": "Error"}, {"key": "d", "text": "None"}], "correct": "a", "explanation": "Non-empty strings are considered Truthy in Python, so `bool(\"False\")` evaluates to True [9]."}, {"id": "37", "question": "What is the result of `10 // 4`?", "options": [{"key": "a", "text": "2.5"}, {"key": "b", "text": "2"}, {"key": "c", "text": "3"}, {"key": "d", "text": "0.4"}], "correct": "b", "explanation": "Floor division `//` rounds the result down to the nearest whole number. 10/4 is 2.5, floor is 2 [8]."}, {"id": "38", "question": "Code Snippet: `x = 5; x += 5; print(x)`. What is x?", "options": [{"key": "a", "text": "5"}, {"key": "b", "text": "10"}, {"key": "c", "text": "25"}, {"key": "d", "text": "0"}], "correct": "b", "explanation": "The operator `+=` adds the right operand to the left operand and assigns the result. 5 + 5 = 10 [34]."}, {"id": "39", "question": "What is the output of `print('a' > 'b')`?", "options": [{"key": "a", "text": "TRUE"}, {"key": "b", "text": "FALSE"}, {"key": "c", "text": "Error"}, {"key": "d", "text": "None"}], "correct": "b", "explanation": "Strings are compared lexicographically (ASCII values). 'a' comes before 'b', so 'a' is less than 'b'. 'a' > 'b' is False [35]."}, {"id": "40", "question": "What happens when you run `int('3.14')`?", "options": [{"key": "a", "text": "It returns 3."}, {"key": "b", "text": "It returns 3.14."}, {"key": "c", "text": "It raises a ValueError."}, {"key": "d", "text": "It raises a TypeError."}], "correct": "c", "explanation": "`int()` on a string containing a float representation (like '3.14') raises a ValueError. You must convert to float first [36]."}, {"id": "41", "question": "Which dunder name typically holds the path to the module file?", "options": [{"key": "a", "text": "`__path__`"}, {"key": "b", "text": "`__file__`"}, {"key": "c", "text": "`__loc__`"}, {"key": "d", "text": "`__dir__`"}], "correct": "b", "explanation": "`__file__` is an internal attribute that contains the path to the file that Python is currently importing or executing [37]."}, {"id": "42", "question": "What is the result of `float(10)`?", "options": [{"key": "a", "text": "10"}, {"key": "b", "text": "10.0"}, {"key": "c", "text": "\"10.0\""}, {"key": "d", "text": "\"10\""}], "correct": "b", "explanation": "`float()` converts an integer to a floating-point number, resulting in `10.0` [38]."}, {"id": "43", "question": "In the expression `x = y = 10`, what is the value of x?", "options": [{"key": "a", "text": "10"}, {"key": "b", "text": "TRUE"}, {"key": "c", "text": "None"}, {"key": "d", "text": "Error"}], "correct": "a", "explanation": "Chained assignment sets both `x` and `y` to 10 [39]."}, {"id": "44", "question": "What does `print(1 == True)` output?", "options": [{"key": "a", "text": "TRUE"}, {"key": "b", "text": "FALSE"}, {"key": "c", "text": "Error"}, {"key": "d", "text": "None"}], "correct": "a", "explanation": "In Python, `True` acts like the integer `1`. `1 == 1` is True [20]."}, {"id": "45", "question": "Which module provides the `namedtuple` factory function?", "options": [{"key": "a", "text": "sys"}, {"key": "b", "text": "collections"}, {"key": "c", "text": "math"}, {"key": "d", "text": "types"}], "correct": "b", "explanation": "`namedtuple` is provided by the `collections` module and can be used to create immutable objects for constants [40]."}, {"id": "46", "question": "What is the output of `print(not True or False)`?", "options": [{"key": "a", "text": "TRUE"}, {"key": "b", "text": "FALSE"}, {"key": "c", "text": "None"}, {"key": "d", "text": "Error"}], "correct": "b", "explanation": "`not` has higher precedence than `or`. `not True` is False. `False or False` is False [24]."}, {"id": "47", "question": "Code Snippet: `x = [1, 19]; y = x; y.append(3); print(x)`", "options": [{"key": "a", "text": "`[1"}, {"key": "b", "text": "19]`"}, {"key": "c", "text": "`[1"}, {"key": "d", "text": "19"}, {"key": "e", "text": "41]`"}], "correct": "`[41]`", "explanation": "Error"}, {"id": "48", "question": "Which of the following is valid syntax for an exponentiation operation?", "options": [{"key": "a", "text": "`2 ^ 3`"}, {"key": "b", "text": "`2 ** 3`"}, {"key": "c", "text": "`2 exp 3`"}, {"key": "d", "text": "`pow(2"}, {"key": "e", "text": "3)` (Function)"}], "correct": "", "explanation": "b"}, {"id": "49", "question": "What is the output of `print(3 * 'A')`?", "options": [{"key": "a", "text": "AAA"}, {"key": "b", "text": "3A"}, {"key": "c", "text": "Error"}, {"key": "d", "text": "None"}], "correct": "a", "explanation": "Multiplying a string by an integer repeats the string that many times [43]."}, {"id": "50", "question": "Which statement is true about Python comments?", "options": [{"key": "a", "text": "They start with `//`."}, {"key": "b", "text": "They start with `#`."}, {"key": "c", "text": "They start with `/*`."}, {"key": "d", "text": "They must be enclosed in curly braces."}], "correct": "b", "explanation": "Single-line comments in Python start with the `#` character [44]."}];
+
+        function renderQuiz() {
+            const container = document.getElementById("quiz-container");
+            container.innerHTML = "";
+
+            questions.forEach((q, index) => {
+                const block = document.createElement("div");
+                block.className = "question-block";
+
+                const p = document.createElement("p");
+                p.innerHTML = "<strong>Question " + (index + 1) + ":<br>" + q.question + "</strong>";
+                block.appendChild(p);
+
+                const optionsDiv = document.createElement("div");
+                optionsDiv.className = "options";
+
+                q.options.forEach(opt => {
+                    const label = document.createElement("label");
+                    label.className = "option-label neutral";
+                    label.dataset.qid = q.id;
+                    label.dataset.key = opt.key;
+
+                    const input = document.createElement("input");
+                    input.type = "radio";
+                    input.name = q.id;
+                    input.value = opt.key;
+
+                    label.appendChild(input);
+                    label.appendChild(
+                        document.createTextNode(" " + opt.key.toUpperCase() + ") " + opt.text)
+                    );
+                    optionsDiv.appendChild(label);
+                });
+
+                block.appendChild(optionsDiv);
+                container.appendChild(block);
+            });
+        }
+
+        function gradeQuiz() {
+            let score = 0;
+
+            document.querySelectorAll(".option-label").forEach(label => {
+                label.classList.remove("correct-choice", "wrong-choice", "selected-only");
+                label.classList.add("neutral");
+            });
+            document.querySelectorAll(".question-status, .explanation").forEach(el => el.remove());
+
+            questions.forEach(q => {
+                const selected = document.querySelector('input[name="' + q.id + '"]:checked');
+                const studentAnswer = selected ? selected.value : null;
+                const isCorrect = studentAnswer === q.correct;
+
+                if (isCorrect) {
+                    score += 1;
+                }
+
+                const labels = document.querySelectorAll('.option-label[data-qid="' + q.id + '"]');
+                labels.forEach(label => {
+                    const key = label.dataset.key;
+
+                    if (key === q.correct) {
+                        label.classList.remove("neutral");
+                        label.classList.add("correct-choice");
+                    }
+
+                    if (studentAnswer && key === studentAnswer) {
+                        label.classList.remove("neutral");
+                        label.classList.add("selected-only");
+                        if (key === q.correct) {
+                            label.classList.add("correct-choice");
+                        } else {
+                            label.classList.add("wrong-choice");
+                        }
+                    }
+                });
+
+                const block = labels[0] ? labels[0].closest(".question-block") : null;
+                if (block) {
+                    const status = document.createElement("p");
+                    status.className = "question-status status " + (isCorrect ? "correct" : "incorrect");
+                    status.textContent = isCorrect ? "Correct" : "Incorrect";
+                    block.appendChild(status);
+
+                    if (q.explanation && q.explanation.trim() !== "") {
+                        const expl = document.createElement("p");
+                        expl.className = "explanation";
+                        expl.innerHTML = "<strong>Explanation:</strong> " + q.explanation;
+                        block.appendChild(expl);
+                    }
+                }
+            });
+
+            const scoreHeading = document.getElementById("score-heading");
+            const total = questions.length;
+            const percentage = Math.round((score / total) * 100);
+            scoreHeading.innerHTML = "Your Score: <strong>" + score + " / " + total + " (" + percentage + "%)</strong>";
+            scoreHeading.classList.remove("hidden");
+        }
+
+        document.getElementById("submit-btn").addEventListener("click", gradeQuiz);
+
+        renderQuiz();
+    </script>
+</body>
+</html>

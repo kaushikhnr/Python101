@@ -1,0 +1,266 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Python101 Lab1 Quiz</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            padding: 40px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .question-block {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #eef1ff;
+            border: 1px solid #c5cff5;
+            border-left: 4px solid #667eea;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+        }
+
+        .question-block strong {
+            display: block;
+            margin-bottom: 15px;
+            font-size: 16px;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .options {
+            margin-top: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .option-label {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            padding: 10px;
+            border-radius: 5px;
+            transition: background-color 0.2s, color 0.2s, border-left 0.2s;
+        }
+
+        .option-label:hover {
+            background-color: #e8e8ff;
+        }
+
+        .option-label.correct-choice {
+            background-color: #d4edda;
+            border-left: 4px solid #28a745;
+        }
+
+        .option-label.wrong-choice {
+            background-color: #f8d7da;
+            border-left: 4px solid #dc3545;
+        }
+
+        .option-label.selected-only {
+            font-weight: bold;
+        }
+
+        .option-label.neutral {
+            background-color: transparent;
+            border-left: 4px solid transparent;
+        }
+
+        input[type="radio"] {
+            margin-right: 10px;
+            cursor: pointer;
+            accent-color: #667eea;
+        }
+
+        .button-group {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        button {
+            background-color: #667eea;
+            color: white;
+            padding: 12px 30px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #764ba2;
+        }
+
+        #score-heading {
+            font-size: 24px;
+            color: #667eea;
+            text-align: center;
+            margin: 30px 0;
+        }
+
+        .status {
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        .status.correct {
+            color: #28a745;
+        }
+
+        .status.incorrect {
+            color: #dc3545;
+        }
+
+        .question-status {
+            margin-top: 10px;
+        }
+
+        .explanation {
+            margin-top: 6px;
+            font-size: 13px;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>ArrayList Quiz</h1>
+
+        <div id="quiz-container"></div>
+
+        <div class="button-group">
+            <button id="submit-btn">Submit Quiz</button>
+        </div>
+
+        <h2 id="score-heading" class="hidden"></h2>
+    </div>
+
+    <script>
+        const questions = [{"id": "1", "question": "What data type does the input() function always return in Python 3?", "options": [{"key": "a", "text": "Integer"}, {"key": "b", "text": "Float"}, {"key": "c", "text": "String"}, {"key": "d", "text": "Boolean"}], "correct": "c", "explanation": "The input() function always returns a string, even if the user types a number [1]."}, {"id": "2", "question": "What is the default value of the 'sep' parameter in the print() function?", "options": [{"key": "a", "text": "Comma ("}, {"key": "b", "text": ")"}, {"key": "c", "text": "Newline (\\n)"}, {"key": "d", "text": "Space ( )"}, {"key": "e", "text": "None"}], "correct": "", "explanation": "c"}, {"id": "3", "question": "Which parameter in the print() function allows you to change what is printed at the very end of the output?", "options": [{"key": "a", "text": "stop"}, {"key": "b", "text": "last"}, {"key": "c", "text": "sep"}, {"key": "d", "text": "end"}], "correct": "d", "explanation": "The 'end' parameter specifies what to print at the end of the output. The default is a newline character [3]."}, {"id": "4", "question": "How do you convert user input into an integer to perform addition?", "options": [{"key": "a", "text": "str(input())"}, {"key": "b", "text": "int(input())"}, {"key": "c", "text": "float(input())"}, {"key": "d", "text": "input(int())"}], "correct": "b", "explanation": "The int() function is used to cast (convert) the string returned by input() into an integer [4]."}, {"id": "5", "question": "What happens if you run the code: print('A'", "options": [{"key": "a", "text": "'B'"}, {"key": "b", "text": "'C'"}, {"key": "c", "text": "sep='-')?"}, {"key": "d", "text": "A B C"}, {"key": "e", "text": "A-B-C"}], "correct": "abc", "explanation": "-A-B-C-"}, {"id": "6", "question": "What is the correct syntax to display a prompt message \"Enter Name:\" to the user?", "options": [{"key": "a", "text": "input(\"Enter Name:\")"}, {"key": "b", "text": "print(\"Enter Name:\""}, {"key": "c", "text": "input())"}, {"key": "d", "text": "get(\"Enter Name:\")"}, {"key": "e", "text": "input = \"Enter Name:\""}], "correct": "", "explanation": "a"}, {"id": "7", "question": "Which print() statement will display \"Hello World\" without moving to a new line afterward?", "options": [{"key": "a", "text": "print(\"Hello World\""}, {"key": "b", "text": "newline=False)"}, {"key": "c", "text": "print(\"Hello World\""}, {"key": "d", "text": "end=\"\")"}, {"key": "e", "text": "print(\"Hello World\""}], "correct": "sep=\"\")", "explanation": "print(\"Hello World\""}, {"id": "8", "question": "What error occurs if you try to execute: input(\"Age: \") + 10?", "options": [{"key": "a", "text": "ValueError"}, {"key": "b", "text": "SyntaxError"}, {"key": "c", "text": "TypeError"}, {"key": "d", "text": "NameError"}], "correct": "c", "explanation": "input() returns a string. You cannot add an integer (10) to a string without converting the input first, causing a TypeError [1]."}, {"id": "9", "question": "Which parameter would you use to force the print() function to output data immediately without buffering?", "options": [{"key": "a", "text": "immediate=True"}, {"key": "b", "text": "buffer=False"}, {"key": "c", "text": "flush=True"}, {"key": "d", "text": "stream=None"}], "correct": "c", "explanation": "The flush=True parameter forces the output buffer to be written to the console immediately [6]."}, {"id": "10", "question": "How can you redirect the output of a print() function to a file named 'log.txt'?", "options": [{"key": "a", "text": "print(\"text\""}, {"key": "b", "text": "to=\"log.txt\")"}, {"key": "c", "text": "print(\"text\""}, {"key": "d", "text": "output=\"log.txt\")"}, {"key": "e", "text": "print(\"text\""}], "correct": "file=open(\"log.txt\"", "explanation": " \"w\"))"}, {"id": "11", "question": "What is the default character used by the 'end' parameter in print()?", "options": [{"key": "a", "text": "Space ( )"}, {"key": "b", "text": "Tab (\\t)"}, {"key": "c", "text": "Newline (\\n)"}, {"key": "d", "text": "Comma ("}, {"key": "e", "text": ")"}], "correct": "", "explanation": "c"}, {"id": "12", "question": "Which function was used in Python 2 to perform the same task as Python 3's input()?", "options": [{"key": "a", "text": "get_input()"}, {"key": "b", "text": "raw_input()"}, {"key": "c", "text": "scan()"}, {"key": "d", "text": "read()"}], "correct": "b", "explanation": "In Python 2, raw_input() was used to get string input. Python 2's input() evaluated the data as code [8]."}, {"id": "13", "question": "What is the result of the following code? print(\"1\"", "options": [{"key": "a", "text": "\"2\""}, {"key": "b", "text": "sep=\":\""}, {"key": "c", "text": "end=\"!\")"}, {"key": "d", "text": "1 2!"}, {"key": "e", "text": "1:2!"}], "correct": "1:2", "explanation": "1 2 :"}, {"id": "14", "question": "Why must you be careful when using eval(input())?", "options": [{"key": "a", "text": "It is too slow"}, {"key": "b", "text": "It always returns a float"}, {"key": "c", "text": "It executes the input as code (security risk)"}, {"key": "d", "text": "It cannot read strings"}], "correct": "c", "explanation": "eval() executes the input as Python code, which can be dangerous if the user enters malicious commands [10]."}, {"id": "15", "question": "To accept a decimal number (like 3.14) from the user", "options": [{"key": "a", "text": "which casting function should you use?"}, {"key": "b", "text": "int()"}, {"key": "c", "text": "long()"}, {"key": "d", "text": "decimal()"}, {"key": "e", "text": "float()"}], "correct": "", "explanation": "d"}, {"id": "16", "question": "What does the input() function do to the program execution?", "options": [{"key": "a", "text": "It speeds it up"}, {"key": "b", "text": "It pauses execution until the user presses Enter"}, {"key": "c", "text": "It runs in the background"}, {"key": "d", "text": "It terminates the program"}], "correct": "b", "explanation": "The input() function pauses the program flow to allow the user to type data [12]."}, {"id": "17", "question": "Which operator is used to combine (concatenate) two strings inside a print statement manually?", "options": [{"key": "a", "text": "+"}, {"key": "b", "text": "&"}, {"key": "c", "text": "%"}, {"key": "d", "text": "*"}], "correct": "a", "explanation": "The plus (+) operator is used to concatenate strings together [13]."}, {"id": "18", "question": "If you want to print variables x", "options": [{"key": "a", "text": "y"}, {"key": "b", "text": "and z separated by a comma and a space"}, {"key": "c", "text": "which command is best?"}, {"key": "d", "text": "print(x + \""}, {"key": "e", "text": "\" + y + \""}], "correct": "\" + z)", "explanation": "print(x"}, {"id": "19", "question": "What format specifier in an f-string allows you to display a number with 2 decimal places?", "options": [{"key": "a", "text": "{value:.2d}"}, {"key": "b", "text": "{value:2f}"}, {"key": "c", "text": "{value:.2f}"}, {"key": "d", "text": "{value:2.0}"}], "correct": "c", "explanation": "The specifier :.2f inside an f-string formats a number to fixed-point notation with two decimal places [14]."}, {"id": "20", "question": "In an interactive environment", "options": [{"key": "a", "text": "the standard output (stdout) is usually buffered in what mode?"}, {"key": "b", "text": "Unbuffered"}, {"key": "c", "text": "Block-buffered"}, {"key": "d", "text": "Line-buffered"}, {"key": "e", "text": "None"}], "correct": "", "explanation": "c"}, {"id": "21", "question": "What is the output of the following code?<br>x = 10<br>print(f\"{x:.2f}\")", "options": [{"key": "a", "text": "10"}, {"key": "b", "text": "10.0"}, {"key": "c", "text": "10.00"}, {"key": "d", "text": "10.2f"}], "correct": "c", "explanation": "The format specifier .2f formats the number as a fixed-point number with exactly two decimal places."}, {"id": "22", "question": "What is the output of the following code?<br>print(\"A\", \"B\", sep=\"-\", end=\"#\")<br>print(\"C\")", "options": [{"key": "a", "text": "A-B#C"}, {"key": "b", "text": "A B#C"}, {"key": "c", "text": "A-B-C#"}, {"key": "d", "text": "A-B # C"}], "correct": "a", "explanation": "The 'sep' parameter places a hyphen between A and B. The 'end' parameter places a # instead of a newline, causing C to print immediately after."}, {"id": "23", "question": "What is the output of the following code?<br>val = 42<br>print(f\"{val=}\")", "options": [{"key": "a", "text": "42"}, {"key": "b", "text": "val=42"}, {"key": "c", "text": "{val=42}"}, {"key": "d", "text": "val = 42"}], "correct": "b", "explanation": "Using the equal sign (=) inside an f-string is a debugging feature that prints the variable name, an equal sign, and the value."}, {"id": "24", "question": "Which of the following lines will cause a SyntaxError in Python versions older than 3.12?", "options": [{"key": "a", "text": "f\"Value: {x}\""}, {"key": "b", "text": "f\"Value: {d['key']}\""}, {"key": "c", "text": "f\"Value: {d[\"key\"]}\""}, {"key": "d", "text": "f\"Value: {x:.2f}\""}], "correct": "c", "explanation": "Before Python 3.12, you could not reuse the same type of quotation marks (double quotes) inside the expression part of an f-string that were used to define the string itself."}, {"id": "25", "question": "What is the output of this code?<br>print(f\"|{'Hello':^10}|\")", "options": [{"key": "a", "text": "|Hello     |"}, {"key": "b", "text": "|     Hello|"}, {"key": "c", "text": "|  Hello   |"}, {"key": "d", "text": "|Hello|"}], "correct": "c", "explanation": "The ^ character in the format specifier centers the string within the specified width (10 characters)."}, {"id": "26", "question": "What happens if you run this code?<br>x = input(\"Enter number: \")<br>print(x * 2)<br>(Assume the user enters 5)", "options": [{"key": "a", "text": "10"}, {"key": "b", "text": "55"}, {"key": "c", "text": "Error"}, {"key": "d", "text": "25"}], "correct": "b", "explanation": "The input() function returns a string. Multiplying the string '5' by 2 results in string repetition ('55'), not arithmetic multiplication."}, {"id": "27", "question": "What output is produced by the following code?<br>x = 1000000<br>print(f\"{x:,}\")", "options": [{"key": "a", "text": "1000000"}, {"key": "b", "text": "1_000_000"}, {"key": "c", "text": "1.000.000"}, {"key": "d", "text": "1,000,000"}], "correct": "d", "explanation": "The comma (,) format specifier adds a comma as a thousands separator."}, {"id": "28", "question": "What is the output of the following code?<br>val = 0.5<br>print(f\"{val:%}\")", "options": [{"key": "a", "text": "0.5%"}, {"key": "b", "text": "50.000000%"}, {"key": "c", "text": "50%"}, {"key": "d", "text": "0.05%"}], "correct": "b", "explanation": "The % specifier multiplies the number by 100 and displays it in fixed ('f') format (default precision 6), followed by a percent sign."}, {"id": "29", "question": "What is the result of the following code?<br>import math<br>print(f\"{math.pi:.3f}\")", "options": [{"key": "a", "text": "3.14"}, {"key": "b", "text": "3.141"}, {"key": "c", "text": "3.142"}, {"key": "d", "text": "3.14159"}], "correct": "c", "explanation": "The .3f specifier rounds the floating-point number to 3 decimal places (3.14159 becomes 3.142)."}, {"id": "30", "question": "What output does this code produce?<br>name = \"Alice\"<br>print(f\"{name:>10}\")", "options": [{"key": "a", "text": "Alice"}, {"key": "b", "text": "Alice"}, {"key": "c", "text": "Alice"}, {"key": "d", "text": "Alice     (Tabbed)"}], "correct": "b", "explanation": "The > character right-aligns the value within a field of the specified width (10)."}, {"id": "31", "question": "What is the output of the following code?<br>x = 10<br>y = 20<br>print(x, y, sep=\"\", end=\"\")", "options": [{"key": "a", "text": "10 20"}, {"key": "b", "text": "1020"}, {"key": "c", "text": "10"}, {"key": "d", "text": "20"}, {"key": "e", "text": "10\\n20"}], "correct": "", "explanation": "b"}, {"id": "32", "question": "Which code snippet correctly formats the number 255 as a string '255' using f-strings?", "options": [{"key": "a", "text": "f\"{255:s}\""}, {"key": "b", "text": "f\"{255:d}\""}, {"key": "c", "text": "f\"{255:f}\""}, {"key": "d", "text": "f\"{255:c}\""}], "correct": "b", "explanation": "The 'd' type specifier formats a number as a decimal integer."}, {"id": "33", "question": "What does the following code print?<br>print(f\"{3 * 4}\")", "options": [{"key": "a", "text": "3 * 4"}, {"key": "b", "text": "12"}, {"key": "c", "text": "{12}"}, {"key": "d", "text": "{3 * 4}"}], "correct": "b", "explanation": "Expressions inside the curly braces of an f-string are evaluated at runtime, so 3 * 4 becomes 12."}, {"id": "34", "question": "What is the purpose of the '!r' flag in this code?<br>name = \"O'Neil\"<br>print(f\"{name!r}\")", "options": [{"key": "a", "text": "It reverses the string"}, {"key": "b", "text": "It prints the string in quotes (representation)"}, {"key": "c", "text": "It removes special characters"}, {"key": "d", "text": "It raises an error"}], "correct": "b", "explanation": "The !r flag calls the __repr__() method, typically returning the string enclosed in quotes (e.g., \"'O'Neil'\")."}, {"id": "35", "question": "If you run the following code, what will be the content of 'log.txt'?<br>with open('log.txt', 'w') as f:<br>    print('Hello', file=f)", "options": [{"key": "a", "text": "Hello (on screen)"}, {"key": "b", "text": "Hello (in file)"}, {"key": "c", "text": "Error: file argument invalid"}, {"key": "d", "text": "None"}], "correct": "b", "explanation": "The file parameter in print() redirects the output to the specified file object instead of the console."}, {"id": "36", "question": "What is the output of the following code?<br>print(\"1\", \"2\", \"3\", sep=\"\\n\")", "options": [{"key": "a", "text": "1 2 3"}, {"key": "b", "text": "1\\n2\\n3 (Literally)"}, {"key": "c", "text": "1\n2\n3"}, {"key": "d", "text": "123"}], "correct": "c", "explanation": "The sep=\"\\n\" argument inserts a newline character between each item, causing them to print on separate lines."}, {"id": "37", "question": "Why might you use 'print(x, flush=True)' in a long-running loop?", "options": [{"key": "a", "text": "To clear the screen"}, {"key": "b", "text": "To ensure output appears immediately without buffering"}, {"key": "c", "text": "To save the output to a file"}, {"key": "d", "text": "To format the output as JSON"}], "correct": "b", "explanation": "Setting flush=True forces the output buffer to empty immediately, which is useful for real-time progress monitoring."}, {"id": "38", "question": "What is the output of this code?<br>score = 9<br>print(f\"Score: {score:03d}\")", "options": [{"key": "a", "text": "Score: 9"}, {"key": "b", "text": "Score: 900"}, {"key": "c", "text": "Score: 009"}, {"key": "d", "text": "Score: 9.00"}], "correct": "c", "explanation": "The specifier 03d pads the integer with zeros on the left to ensure it is at least 3 digits wide."}, {"id": "39", "question": "What is the output of the following code?<br>x = 'Data'<br>print(f\"{x:=^8}\")", "options": [{"key": "a", "text": "==Data=="}, {"key": "b", "text": "Data===="}, {"key": "c", "text": "====Data"}, {"key": "d", "text": "Data"}], "correct": "a", "explanation": "The specifier =^8 centers 'Data' in a field of width 8, using '=' as the fill character."}, {"id": "40", "question": "Which of the following is NOT a valid way to create an f-string?", "options": [{"key": "a", "text": "f'text {var}'"}, {"key": "b", "text": "F\"text {var}\""}, {"key": "c", "text": "f\"text {var}\""}, {"key": "d", "text": "func\"text {var}\""}], "correct": "d", "explanation": "F-strings must be prefixed with either 'f' or 'F'. 'func' is not a valid prefix."}, {"id": "41", "question": "What output will this code produce?<br>items = [1-3]<br>print(items)", "options": [{"key": "a", "text": "1 2 3"}, {"key": "b", "text": "[1-3]"}, {"key": "c", "text": "1\\n2\\n3"}, {"key": "d", "text": "-1"}, {"key": "e", "text": "2"}], "correct": "3)", "explanation": ""}, {"id": "42", "question": "What happens if you try to use a backslash inside an f-string expression in Python 3.10?<br>f\"{'\\n'.join(['a', 'b'])}\"", "options": [{"key": "a", "text": "It works correctly"}, {"key": "b", "text": "It prints the backslash literally"}, {"key": "c", "text": "It raises a SyntaxError"}, {"key": "d", "text": "It ignores the backslash"}], "correct": "c", "explanation": "Before Python 3.12, backslashes were not allowed inside the expression part (curly braces) of an f-string."}, {"id": "43", "question": "What is the result of the following code?<br>print(\"Py\", \"thon\", sep=\"\")", "options": [{"key": "a", "text": "Py thon"}, {"key": "b", "text": "Python"}, {"key": "c", "text": "Py\nthon"}, {"key": "d", "text": "Py\\tthon"}], "correct": "b", "explanation": "The sep=\"\" argument removes the default space separator, combining the strings into 'Python'."}, {"id": "44", "question": "How does pprint(data, width=10) affect the output?", "options": [{"key": "a", "text": "It indents by 10 spaces"}, {"key": "b", "text": "It limits the output to 10 lines"}, {"key": "c", "text": "It attempts to wrap lines that are longer than 10 characters"}, {"key": "d", "text": "It truncates string values to 10 characters"}], "correct": "c", "explanation": "The width parameter in pprint tells the printer to attempt to wrap output so it fits within the specified character width."}, {"id": "45", "question": "What is the output of this code?<br>x = 1234.5678<br>print(f\"{x:.1f}\")", "options": [{"key": "a", "text": "1234.5"}, {"key": "b", "text": "1234.6"}, {"key": "c", "text": "1234.56"}, {"key": "d", "text": "1.2E+03"}], "correct": "b", "explanation": "The .1f specifier rounds the number to one decimal place."}, {"id": "46", "question": "Which command-line flag can be used to run a Python script with unbuffered binary stdout and stderr?", "options": [{"key": "a", "text": "-u"}, {"key": "b", "text": "-v"}, {"key": "c", "text": "-x"}, {"key": "d", "text": "-b"}], "correct": "a", "explanation": "The -u flag forces the stdin, stdout, and stderr streams to be totally unbuffered."}, {"id": "47", "question": "What is the output of the following code?<br>import math<br>print(f\"{math.pi:10.2f}\")", "options": [{"key": "a", "text": "3.14"}, {"key": "b", "text": "3.14"}, {"key": "c", "text": "3.14000000"}, {"key": "d", "text": "3.14"}], "correct": "a", "explanation": "The format 10.2f means a total width of 10 characters, right-aligned, with 2 decimal places. Spaces pad the left side."}, {"id": "48", "question": "In the code below, what is the data type of 'age'?<br>age = input(\"Enter age: \")", "options": [{"key": "a", "text": "int"}, {"key": "b", "text": "str"}, {"key": "c", "text": "float"}, {"key": "d", "text": "bool"}], "correct": "b", "explanation": "The input() function always returns a string, regardless of what characters the user types."}, {"id": "49", "question": "What is the output of this code?<br>print(f\"{{ 5 }}\")", "options": [{"key": "a", "text": "5"}, {"key": "b", "text": "{ 5 }"}, {"key": "c", "text": "{{ 5 }}"}, {"key": "d", "text": "Error"}], "correct": "b", "explanation": "Double curly braces {{ }} in an f-string are used to escape the braces, resulting in a literal single brace in the output."}, {"id": "50", "question": "Why is the following code unsafe?<br>user_input = input(\"cmd: \")<br>eval(user_input)", "options": [{"key": "a", "text": "It is inefficient"}, {"key": "b", "text": "It creates a syntax error"}, {"key": "c", "text": "It allows execution of arbitrary code (security risk)"}, {"key": "d", "text": "It always returns None"}], "correct": "c", "explanation": "The eval() function executes the string argument as Python code. If a user inputs malicious code, it will run."}];
+
+        function renderQuiz() {
+            const container = document.getElementById("quiz-container");
+            container.innerHTML = "";
+
+            questions.forEach((q, index) => {
+                const block = document.createElement("div");
+                block.className = "question-block";
+
+                const p = document.createElement("p");
+                p.innerHTML = "<strong>Question " + (index + 1) + ":<br>" + q.question + "</strong>";
+                block.appendChild(p);
+
+                const optionsDiv = document.createElement("div");
+                optionsDiv.className = "options";
+
+                q.options.forEach(opt => {
+                    const label = document.createElement("label");
+                    label.className = "option-label neutral";
+                    label.dataset.qid = q.id;
+                    label.dataset.key = opt.key;
+
+                    const input = document.createElement("input");
+                    input.type = "radio";
+                    input.name = q.id;
+                    input.value = opt.key;
+
+                    label.appendChild(input);
+                    label.appendChild(
+                        document.createTextNode(" " + opt.key.toUpperCase() + ") " + opt.text)
+                    );
+                    optionsDiv.appendChild(label);
+                });
+
+                block.appendChild(optionsDiv);
+                container.appendChild(block);
+            });
+        }
+
+        function gradeQuiz() {
+            let score = 0;
+
+            document.querySelectorAll(".option-label").forEach(label => {
+                label.classList.remove("correct-choice", "wrong-choice", "selected-only");
+                label.classList.add("neutral");
+            });
+            document.querySelectorAll(".question-status, .explanation").forEach(el => el.remove());
+
+            questions.forEach(q => {
+                const selected = document.querySelector('input[name="' + q.id + '"]:checked');
+                const studentAnswer = selected ? selected.value : null;
+                const isCorrect = studentAnswer === q.correct;
+
+                if (isCorrect) {
+                    score += 1;
+                }
+
+                const labels = document.querySelectorAll('.option-label[data-qid="' + q.id + '"]');
+                labels.forEach(label => {
+                    const key = label.dataset.key;
+
+                    if (key === q.correct) {
+                        label.classList.remove("neutral");
+                        label.classList.add("correct-choice");
+                    }
+
+                    if (studentAnswer && key === studentAnswer) {
+                        label.classList.remove("neutral");
+                        label.classList.add("selected-only");
+                        if (key === q.correct) {
+                            label.classList.add("correct-choice");
+                        } else {
+                            label.classList.add("wrong-choice");
+                        }
+                    }
+                });
+
+                const block = labels[0] ? labels[0].closest(".question-block") : null;
+                if (block) {
+                    const status = document.createElement("p");
+                    status.className = "question-status status " + (isCorrect ? "correct" : "incorrect");
+                    status.textContent = isCorrect ? "Correct" : "Incorrect";
+                    block.appendChild(status);
+
+                    if (q.explanation && q.explanation.trim() !== "") {
+                        const expl = document.createElement("p");
+                        expl.className = "explanation";
+                        expl.innerHTML = "<strong>Explanation:</strong> " + q.explanation;
+                        block.appendChild(expl);
+                    }
+                }
+            });
+
+            const scoreHeading = document.getElementById("score-heading");
+            const total = questions.length;
+            const percentage = Math.round((score / total) * 100);
+            scoreHeading.innerHTML = "Your Score: <strong>" + score + " / " + total + " (" + percentage + "%)</strong>";
+            scoreHeading.classList.remove("hidden");
+        }
+
+        document.getElementById("submit-btn").addEventListener("click", gradeQuiz);
+
+        renderQuiz();
+    </script>
+</body>
+</html>
